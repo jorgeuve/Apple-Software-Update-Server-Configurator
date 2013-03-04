@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+
+BEGIN { 
+	use File::Basename;
+	unshift @INC, dirname($0);
+}
+#use strict;
+use Pashua;
+#use Data::Dumper;
+#sub osascript($) { print Dumper(['/usr/bin/osascript', map { ('-e', $_) } split(/[\r\n]+/, $_[0])]); }
+sub osascript($) { system '/usr/bin/osascript', map { ('-e', $_) } split(/[\r\n]+/, $_[0]); }
+
+my $home  = $ENV{"HOME"};
+my $plist = "/Library/Preferences/com.apple.SoftwareUpdate";
+my $url = "http://mac-sus.iastate.edu:8088/index.sucatalog";
+
+my $catalogurl = `/usr/bin/defaults read $plist CatalogURL 2>&1`; chomp($catalogurl);
+if ($catalogurl eq $url)
+{
+	$currentSUS = "Iowa State's";
+}
+else
+{
+	$currentSUS = "Apple's";
+}
+
+my $conf = <<EOCONF;
+*.transparency=1
+*.title = Configure Software Update Server
+
+text.type = text
+text.default = You are configured to use $currentSUS Software Update Server.
+
+select.type = radiobutton
+select.label = Which Software Update Server do you want to use?
+select.option = Use Iowa State's Software Update Server
+select.option = Use Apple's Software Update Server
+select.default = Use $currentSUS Software Update Server
+
+okay.type = defaultbutton
+okay.label = Configure
+cancel.type = cancelbutton
+cancel.label = Cancel
+
+EOCONF
+
+# Pass the configuration string to the Pashua module
+my %result = Pashua::run($conf);
+
+if (%result)
+{
+	exit if ($result{"cancel"} == 1);
+
+	if ($result{"select"} eq "Use Iowa State's Software Update Server")
+	{
+		if ($currentSUS ne "Iowa State's")
+		{
+			# defaults write
+			osascript <<EOSCRIPT;
+do shell script "/usr/bin/defaults write $plist CatalogURL $url" with administrator privileges
+EOSCRIPT
+		}
+	}
+	else # Use Apple's Software Update Server
+	{
+		if ($currentSUS ne "Apple's")
+		{
+			# defaults delete
+			osascript <<EOSCRIPT;
+do shell script "/usr/bin/defaults delete $plist CatalogURL" with administrator privileges
+EOSCRIPT
+		}
+	}
+
+	my $catalogurl = `/usr/bin/defaults read $plist CatalogURL 2>&1`; chomp($catalogurl);
+	if ($catalogurl eq $url) { $currentSUS = "Iowa State's"; }
+	else                     { $currentSUS = "Apple's";      }
+
+	$conf = <<EOCONF;
+*.transparency=1
+*.title = Configure Software Update Server
+
+text.type = text
+text.width = 320
+text.default = You are configured to use $currentSUS Software Update Server.
+EOCONF
+	my %ignore = Pashua::run($conf);
+}

@@ -1,5 +1,36 @@
 #!/usr/bin/env perl
 
+############################################## 
+#written originally by Iowa State University ITS
+#http://tech.its.iastate.edu/macosx/howtos/sus.shtml
+# 
+#using Carsten Blüm Pashua development 
+#http://www.bluem.net/en/mac/pashua/
+#
+#Rewritten and addapted for Reposado by Jorge Valencia
+#http://www.jorgev.es
+#
+#Apple system administrator & support at Spanish National Cancer Research Centre
+#http://www.cnio.es
+#
+#--improves--
+#-Especially adapted to work with reposado server
+#https://github.com/wdas/reposado
+#-add variables to specify custom repositories branches for each OS versión 
+#-added easy personalization for your own catalog update server changing 
+#a few variables at the top of this script
+#-changed code for easy creation of new catalogs for new OS version
+#-Better machine catalog detecttion using company domain
+###############################################
+
+# Fill your Own data 
+my $ownserver = "reposado.cnio.es";
+my $ownport = "80";
+my $owncompany= "CNIO's";
+
+##### Do not touch below these lines ###########
+
+
 BEGIN { 
 	use File::Basename;
 	unshift @INC, dirname($0);
@@ -10,14 +41,39 @@ use Pashua;
 #sub osascript($) { print Dumper(['/usr/bin/osascript', map { ('-e', $_) } split(/[\r\n]+/, $_[0])]); }
 sub osascript($) { system '/usr/bin/osascript', map { ('-e', $_) } split(/[\r\n]+/, $_[0]); }
 
+
+# OS detection
+my $tigerurl = "content/catalogs/index.sucatalog";
+my $leopardurl = "content/catalogs/others/index-leopard.merged-1.sucatalog";
+my $snowleopardurl = "content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog";
+my $lionurl = "content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog";
+my $mountainlionurl = "content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
+
+$sw_vers = `/usr/bin/sw_vers | /usr/bin/grep ProductVersion | /usr/bin/cut -c17-21`;
+
+if ($sw_vers =~ /10.4./) {
+     $exturl = "$tigerurl";
+   	} elsif ($sw_vers =~ /10.5./) {
+      $exturl = "$leopardurl";
+	} elsif ($sw_vers =~ /10.6./) {
+      $exturl = "$snowleopardurl";
+	} elsif ($sw_vers =~ /10.7./) {
+      $exturl = "$lionurl";
+	} elsif ($sw_vers =~ /10.8./) {
+      $exturl = "$mountainlionurl";
+    } else {
+       print "We dont know about $sw_vers Please Update\n " ;
+    }
+
 my $home  = $ENV{"HOME"};
 my $plist = "/Library/Preferences/com.apple.SoftwareUpdate";
-my $url = "http://mac-sus.iastate.edu:8088/index.sucatalog";
-
+my $baseurl = "http://$ownserver:$ownport/";
+my $url = "$baseurl$exturl";
 my $catalogurl = `/usr/bin/defaults read $plist CatalogURL 2>&1`; chomp($catalogurl);
-if ($catalogurl eq $url)
+
+if ($catalogurl =~ /$ownserver/)
 {
-	$currentSUS = "Iowa State's";
+	$currentSUS = $owncompany;
 }
 else
 {
@@ -33,7 +89,7 @@ text.default = You are configured to use $currentSUS Software Update Server.
 
 select.type = radiobutton
 select.label = Which Software Update Server do you want to use?
-select.option = Use Iowa State's Software Update Server
+select.option = Use $owncompany Software Update Server
 select.option = Use Apple's Software Update Server
 select.default = Use $currentSUS Software Update Server
 
@@ -51,9 +107,9 @@ if (%result)
 {
 	exit if ($result{"cancel"} == 1);
 
-	if ($result{"select"} eq "Use Iowa State's Software Update Server")
+	if ($result{"select"} eq "Use $owncompany Software Update Server")
 	{
-		if ($currentSUS ne "Iowa State's")
+		if ($currentSUS ne "$owncompany")
 		{
 			# defaults write
 			osascript <<EOSCRIPT;
@@ -73,7 +129,7 @@ EOSCRIPT
 	}
 
 	my $catalogurl = `/usr/bin/defaults read $plist CatalogURL 2>&1`; chomp($catalogurl);
-	if ($catalogurl eq $url) { $currentSUS = "Iowa State's"; }
+	if ($catalogurl =~ /$ownserver/) { $currentSUS = $owncompany; }
 	else                     { $currentSUS = "Apple's";      }
 
 	$conf = <<EOCONF;

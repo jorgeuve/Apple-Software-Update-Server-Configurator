@@ -26,7 +26,7 @@
 # Fill your Own data 
 my $ownserver = "reposado.cnio.es";
 my $ownport = "80";
-my $owncompany= "CNIO's";
+my $owncompany= "YourCompany's";
 
 ##### Do not touch below these lines ###########
 
@@ -43,6 +43,8 @@ sub osascript($) { system '/usr/bin/osascript', map { ('-e', $_) } split(/[\r\n]
 
 
 # OS detection
+
+# Modify to your own reposado branches if necessary, this values ok by default for reposado server
 my $tigerurl = "content/catalogs/index.sucatalog";
 my $leopardurl = "content/catalogs/others/index-leopard.merged-1.sucatalog";
 my $snowleopardurl = "content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog";

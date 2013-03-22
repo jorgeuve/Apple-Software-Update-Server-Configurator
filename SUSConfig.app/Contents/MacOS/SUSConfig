@@ -21,6 +21,7 @@
 #a few variables at the top of this script
 #-changed code for easy creation of new catalogs for new OS version
 #-Better machine catalog detecttion using company domain
+#-Added computer OS detecttion
 ###############################################
 
 # Fill your Own data 

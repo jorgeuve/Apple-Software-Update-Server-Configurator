@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>edu.iastate.SUSConfig</string>
+	<string>generic.SUSConfig</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>1.3</string>
 	<key>CFBundlePackageType</key>
@@ -17,7 +17,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.4.5</string>
+	<string>1.0.0.0</string>
 	<key>LSUIElement</key>
 	<false/>
 	<key>NSMainNibFile</key>

@@ -25,7 +25,7 @@
 ###############################################
 
 # Fill your Own data 
-my $ownserver = "reposado.cnio.es";
+my $ownserver = "yoursserver.yourdomain.es";
 my $ownport = "80";
 my $owncompany= "YourCompany's";
 
@@ -51,6 +51,7 @@ my $leopardurl = "content/catalogs/others/index-leopard.merged-1.sucatalog";
 my $snowleopardurl = "content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog";
 my $lionurl = "content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog";
 my $mountainlionurl = "content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
+my $mavericksurl = "content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
 
 $sw_vers = `/usr/bin/sw_vers | /usr/bin/grep ProductVersion | /usr/bin/cut -c17-21`;
 
@@ -64,6 +65,8 @@ if ($sw_vers =~ /10.4./) {
       $exturl = "$lionurl";
 	} elsif ($sw_vers =~ /10.8./) {
       $exturl = "$mountainlionurl";
+	} elsif ($sw_vers =~ /10.9./) {
+      $exturl = "$mavericksurl";
     } else {
        print "We dont know about $sw_vers Please Update\n " ;
     }

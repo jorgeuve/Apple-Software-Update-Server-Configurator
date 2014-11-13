@@ -52,6 +52,7 @@ my $snowleopardurl = "content/catalogs/others/index-leopard-snowleopard.merged-1
 my $lionurl = "content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog";
 my $mountainlionurl = "content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
 my $mavericksurl = "content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
+my $yosemiteurl = "content/catalogs/others/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog";
 
 $sw_vers = `/usr/bin/sw_vers | /usr/bin/grep ProductVersion | /usr/bin/cut -c17-21`;
 
@@ -67,8 +68,10 @@ if ($sw_vers =~ /10.4./) {
       $exturl = "$mountainlionurl";
 	} elsif ($sw_vers =~ /10.9./) {
       $exturl = "$mavericksurl";
+	} elsif ($sw_vers =~ /10.10./) {
+      $exturl = "$yosemiteurl";
     } else {
-       print "We dont know about $sw_vers Please Update\n " ;
+       print "We don´t know about $sw_vers Please Update\n " ;
     }
 
 my $home  = $ENV{"HOME"};

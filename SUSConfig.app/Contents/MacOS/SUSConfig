@@ -68,7 +68,7 @@ if ($sw_vers =~ /10.4./) {
       $exturl = "$mountainlionurl";
 	} elsif ($sw_vers =~ /10.9./) {
       $exturl = "$mavericksurl";
-	} elsif ($sw_vers =~ /10.10./) {
+	} elsif ($sw_vers =~ /10.10/) {
       $exturl = "$yosemiteurl";
     } else {
        print "We don´t know about $sw_vers Please Update\n " ;
